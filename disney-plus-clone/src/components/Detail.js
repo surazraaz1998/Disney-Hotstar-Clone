@@ -1,15 +1,42 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components'
+import db from '../firebase';
 
 
 function Detail() {
+
+    const {id}= useParams();
+    console.log(id);
+
+    const [movie, setMovie] = useState({});
+
+    useEffect(() => {
+        db.collection("movies")
+        .doc(id)
+        .get()
+        .then((doc)=>{
+            if(doc.exists){
+                //save the movie data
+                setMovie(doc.data());
+            }
+            else {
+                //redirect to home
+            }
+        })
+
+    }, [])
+    console.log("Movie is", movie);
+    //const BackgroundImg= movie.backgroundImg;
+
+
     return (
         <Container>
             <Background>
-                <img src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/4F39B7E16726ECF419DD7C49E011DD95099AA20A962B0B10AA1881A70661CE45/scale?width=1440&aspectRatio=1.78&format=jpeg"/>
+                <img src={movie.backgroundImg}/>
             </Background>
             <ImgTitle>
-               <img  src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/D7AEE1F05D10FC37C873176AAA26F777FC1B71E7A6563F36C6B1B497CAB1CEC2/scale?width=1440&aspectRatio=1.78"/>
+               <img  src={movie.titleImg}/>
             </ImgTitle>
             <Control>
                 <PlayButton>
@@ -28,10 +55,10 @@ function Detail() {
                 </GroupWatchButton>
             </Control>
             <SubTitle>
-                2018 . 7m . Family, Fantasy, Kids, Animation
+                {movie.subTitle}
             </SubTitle>
             <Description>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+               {movie.description}
             </Description>
         </Container>
     )
